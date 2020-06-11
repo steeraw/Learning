@@ -1,0 +1,4 @@
+cmake-build-*
+.vs
+.idea
+prog

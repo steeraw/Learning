@@ -1,37 +1,71 @@
-﻿// thead.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-
-#include <iostream>
+﻿#include <iostream>
 #include <thread>
+#include <time.h>
+#include <cmath>
+#define PI 3.14159265
 
 using namespace std;
 
+class CTimer
+{
+    timespec t_start, t_end;
+    long long spended_time;
+public:
+    void Start()
+    {
+        clock_gettime(CLOCK_REALTIME, &t_start);
+        cout << "Counting started" << endl;
+    }
+    void End()
+    {
+        clock_gettime(CLOCK_REALTIME, &t_end);
+        cout << "Counting finished" << endl;
+    }
+    void Count()
+    {
+        spended_time = t_end.tv_nsec - t_start.tv_nsec;
+        spended_time = 1000000000*(t_end.tv_sec - t_start.tv_sec)+(t_end.tv_nsec - t_start.tv_nsec);
+        cout << "Spended " << spended_time << " nanoseconds" << endl;
+    }
 
+};
 void func(int a, int b)
 {
-	long long sum = 0;
+	long double sum = 0;
 	for (a; a <= b; a++)
 	{
-		for(long i = 0; i < 200000000; i = i + 2)
-		{
-			i--;
-		}
-		sum += a;
+		sum += sin(a * PI / 180);
 		
-		cout << "Thread ID: " << this_thread::get_id() << "  Current sum:\t" << sum << endl;
+		//cout << "Thread ID: " << this_thread::get_id() << "  Current sum:\t" << sum << endl;
 	}
 	cout << "Thread ID: " << this_thread::get_id() << " Sum =\t" << sum << endl;	
 }
 
 int main()
-{	
-	thread th1(func, 1, 7);
-	thread th2(func, 30, 35);
+{
+    CTimer timer;
+    //timespec ts, te;
+    //long int tt;
+    //clock_gettime(CLOCK_REALTIME, &ts);
+    //cout << ts.tv_nsec << endl;
+    timer.Start();
 
-	func(2, 4);
+
+	thread th1(func, 1, 100000000);
+	thread th2(func, 10000000, 200000000);
+
+	func(30, 30000000);
+
 	th1.join();
 	th2.join();
-	
+	timer.End();
+	timer.Count();
+    //clock_gettime(CLOCK_REALTIME, &te);
+    //cout << ts.tv_nsec << endl;
+    //tt = te.tv_nsec - ts.tv_nsec;
+    //cout << te.tv_nsec - ts.tv_nsec << endl;
+    //tt=1000000000*(te.tv_sec - ts.tv_sec)+(te.tv_nsec - ts.tv_nsec);
+    //cout << tt << endl;
 	//th2.join();
 	//func(0, 1000000);
 	
@@ -40,14 +74,3 @@ int main()
 	
     
 }
-
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
